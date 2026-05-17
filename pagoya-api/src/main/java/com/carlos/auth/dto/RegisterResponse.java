@@ -1,4 +1,10 @@
 package com.carlos.auth.dto;
 
-public class RegisterResponse {
-}
+public record RegisterResponse(
+        Long userId,
+        String email,
+        String role,
+        Long customerId,
+        String fullName,
+        String dni
+) {}

@@ -1,3 +1,9 @@
 spring:
   application:
     name: pagoya-api
+pagoya:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:d3BlbnNzbCByYW5kIC1iYXNlNjQgNjQgZm9yIHBhZ295YSBhcGkgc2VjdXJpdHk=}
+      expiration-ms: ${JWT_EXPIRATION_MS:900000}
+      refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}

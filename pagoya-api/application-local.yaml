@@ -16,4 +16,3 @@ spring:
     init:
       mode: never
       platform: postgres
-

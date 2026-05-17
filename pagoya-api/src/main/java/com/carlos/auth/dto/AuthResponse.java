@@ -1,4 +1,8 @@
 package com.carlos.auth.dto;
-
-public class AuthResponse {
-}
+public record AuthResponse(
+        String accessToken,
+        String refreshToken,
+        String email,
+        String role,
+        long accessExpiresInMs
+) {}

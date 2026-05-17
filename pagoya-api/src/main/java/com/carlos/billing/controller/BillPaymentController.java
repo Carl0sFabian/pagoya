@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,6 +46,8 @@ public class BillPaymentController {
             @ApiResponse(responseCode = "200", description = "Lista paginada"),
             @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
     })
+
+    @PreAuthorize("hasRole('ADMIN') or @securityChecks.isCustomerOwner(#customerId, authentication.principal)")
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<PageResponse<BillPaymentResponse>> findByCustomer(
             @PathVariable Long customerId,
@@ -59,4 +62,5 @@ public class BillPaymentController {
             @PathVariable Long customerId) {
         return ResponseEntity.ok(billPaymentService.reportByCategory(customerId));
     }
+
 }

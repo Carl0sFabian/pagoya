@@ -1,4 +1,9 @@
 package com.carlos.auth.exception;
 
-public class InvalidRefreshTokenException {
+import com.carlos.shared.exception.BusinessRuleException;
+
+public class InvalidRefreshTokenException extends BusinessRuleException {
+    public InvalidRefreshTokenException() {
+        super("refresh token invalido, expirado o revocado");
+    }
 }
