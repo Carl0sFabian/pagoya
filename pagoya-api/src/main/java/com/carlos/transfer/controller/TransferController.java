@@ -1,28 +1,35 @@
 package com.carlos.transfer.controller;
 
-import com.carlos.transfer.model.Transfer;
+import com.carlos.shared.pagination.PageResponse;
+import com.carlos.transfer.dto.TransferRequest;
+import com.carlos.transfer.dto.TransferResponse;
 import com.carlos.transfer.service.ITransferService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
 @RestController
 @RequestMapping("/api/transfers")
 @RequiredArgsConstructor
 public class TransferController {
+
     private final ITransferService transferService;
+
     @PostMapping
-    public ResponseEntity<Transfer> transfer(@RequestBody Transfer transfer) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                transferService.transfer(transfer));
+    public ResponseEntity<TransferResponse> transfer(
+            @Valid @RequestBody TransferRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(transferService.transfer(request));
     }
+
     @GetMapping("/account/{accountNumber}")
-    public ResponseEntity<List<Transfer>> findByAccountNumber(@PathVariable String
-                                                                      accountNumber) {
-        return
-                ResponseEntity.ok(transferService.findByAccountNumber(accountNumber));
+    public ResponseEntity<PageResponse<TransferResponse>> findByAccountNumber(
+            @PathVariable String accountNumber,
+            @PageableDefault(size = 10, sort = "createdAt") Pageable pageable) {
+        return ResponseEntity.ok(PageResponse.from(
+                transferService.findByAccountNumber(accountNumber, pageable)));
     }
 }

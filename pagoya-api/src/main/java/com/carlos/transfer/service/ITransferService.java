@@ -1,8 +1,11 @@
 package com.carlos.transfer.service;
-import com.carlos.transfer.model.Transfer;
+import com.carlos.transfer.dto.TransferRequest;
+import com.carlos.transfer.dto.TransferResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 public interface ITransferService {
-    Transfer transfer(Transfer transfer);
-    List<Transfer> findByAccountNumber(String accountNumber);
+    TransferResponse transfer(TransferRequest request);
+    Page<TransferResponse> findByAccountNumber(String accountNumber, Pageable pageable);
+
 }
