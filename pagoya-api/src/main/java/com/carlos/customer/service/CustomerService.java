@@ -1,31 +1,49 @@
 package com.carlos.customer.service;
 
+import com.carlos.customer.dto.CreateCustomerRequest;
+import com.carlos.customer.dto.CustomerResponse;
+import com.carlos.customer.exception.CustomerProfileAlreadyExistsException;
+import com.carlos.customer.exception.DniAlreadyExistsException;
+import com.carlos.customer.mapper.CustomerMapper;
 import com.carlos.customer.model.Customer;
 import com.carlos.customer.repository.CustomerRepository;
+import com.carlos.shared.exception.ResourceNotFoundException;
+import com.carlos.shared.pagination.PageResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 @Service
 @RequiredArgsConstructor
 public class CustomerService implements ICustomerService {
+
     private final CustomerRepository customerRepository;
+    private final CustomerMapper customerMapper;
+
     @Override
-    public Customer create(Customer customer) {
-        // RN-03: El DNI debe ser unico en el sistema
-        if (customerRepository.existsByDni(customer.getDni())) {
-            throw new RuntimeException("El DNI ya esta registrado");
-        }
-        // RN-04: Un usuario solo puede tener un perfil de cliente
-        if (customer.getUser() == null || customer.getUser().getId() == null) {
-            throw new RuntimeException("El usuario es obligatorio");
-        }
-        if (customerRepository.existsByUser_Id(customer.getUser().getId())) {
-            throw new RuntimeException("El usuario ya tiene un perfil de cliente");
-        }
-        return customerRepository.save(customer);
+    @Transactional
+    public CustomerResponse create(CreateCustomerRequest request) {
+        if (customerRepository.existsByDni(request.dni()))
+            throw new DniAlreadyExistsException(request.dni());
+        if (customerRepository.existsByUserId(request.userId()))
+            throw new CustomerProfileAlreadyExistsException();
+        Customer entity = customerMapper.toEntity(request);
+        return customerMapper.toResponse(customerRepository.save(entity));
     }
+
     @Override
-    public Customer findById(Long id) {
+    public CustomerResponse findById(Long id) {
         return customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+                .map(customerMapper::toResponse)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "cliente con id " + id + " no encontrado"));
+    }
+
+    @Override
+    public Page<CustomerResponse> findAll(Pageable pageable) {
+        return customerRepository.findAll(pageable)
+                .map(customerMapper::toResponse);
     }
 }
