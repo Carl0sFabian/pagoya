@@ -1,5 +1,4 @@
 package com.carlos.transfer.service;
-
 import com.carlos.account.model.Account;
 import com.carlos.account.model.AccountStatus;
 import com.carlos.account.repository.AccountRepository;
@@ -17,7 +16,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class TransferService implements ITransferService {
-    private final TransferService transferRepository;
+    private final TransferRepository transferRepository;
     private final AccountRepository accountRepository;
     private final RestTemplate restTemplate;
     @Override
@@ -74,7 +73,8 @@ public class TransferService implements ITransferService {
         return transferRepository.save(transfer);
     }
     private BigDecimal getExchangeRate(String currency) {
-        String url = "https://api.frankfurter.dev/v2/rates?base=PEN&quotes=" + currency;
+        String url = "https://api.frankfurter.dev/v2/rates?base=PEN&quotes=" +
+                currency;
         Map response = restTemplate.getForObject(url, Map.class);
         Map rates = (Map) response.get("rates");
         return new BigDecimal(rates.get(currency).toString());
