@@ -1,7 +1,8 @@
 package com.carlos.auth.service;
 
-import com.carlos.auth.model.User;
+import com.carlos.auth.dto.RegisterUserRequest;
+import com.carlos.auth.dto.UserResponse;
 
 public interface IUserService {
-    User register(User user);
+    UserResponse register(RegisterUserRequest request);
 }
