@@ -1,4 +1,9 @@
 package com.carlos.billing.exception;
 
-public class InactiveProviderException {
+import com.carlos.shared.exception.BusinessRuleException;
+
+public class InactiveProviderException extends BusinessRuleException {
+    public InactiveProviderException() {
+        super("el proveedor seleccionado no esta disponible");
+    }
 }

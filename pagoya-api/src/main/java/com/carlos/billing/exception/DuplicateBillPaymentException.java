@@ -1,4 +1,9 @@
 package com.carlos.billing.exception;
 
-public class DuplicateBillPaymentException {
+import com.carlos.shared.exception.BusinessRuleException;
+
+public class DuplicateBillPaymentException extends BusinessRuleException {
+    public DuplicateBillPaymentException() {
+        super("ya tienes registrado un pago para este recibo");
+    }
 }

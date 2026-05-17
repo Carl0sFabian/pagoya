@@ -1,4 +1,5 @@
 package com.carlos.billing.model;
 
-public class ProviderCategory {
+public enum ProviderCategory {
+    UTILITIES, TELECOM, INTERNET, CABLE_TV, OTHER
 }

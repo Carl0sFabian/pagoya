@@ -1,4 +1,7 @@
 package com.carlos.billing.dto;
 
-public class ServiceProviderResponse {
-}
+public record ServiceProviderResponse(
+        Long id,
+        String name,
+        String category
+) {}

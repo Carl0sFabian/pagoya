@@ -52,3 +52,18 @@ GROUP BY a.type, a.status
 ORDER BY a.type, a.status;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION sp_payments_by_category(p_customer_id BIGINT)
+RETURNS TABLE(category VARCHAR, total_count BIGINT, total_amount NUMERIC) AS $$
+BEGIN
+    RETURN QUERY
+SELECT sp.category::VARCHAR,
+    COUNT(bp.id)::BIGINT,
+    COALESCE(SUM(bp.amount), 0)::NUMERIC
+FROM bill_payments bp
+         JOIN service_providers sp ON sp.id = bp.provider_id
+WHERE bp.customer_id = p_customer_id
+GROUP BY sp.category
+ORDER BY total_amount DESC;
+END;
+$$ LANGUAGE plpgsql;

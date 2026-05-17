@@ -1,4 +1,5 @@
 package com.carlos.billing.model;
 
-public class PaymentStatus {
+public enum PaymentStatus {
+    PAID, FAILED, REFUNDED
 }
