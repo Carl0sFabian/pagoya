@@ -1,10 +1,13 @@
 package com.carlos.account.exception;
 
-public class AccountNotOperativeException extends RuntimeException {
+import com.carlos.shared.exception.BusinessRuleException;
 
+public class AccountNotOperativeException extends BusinessRuleException {
+    
     public AccountNotOperativeException() {
-        super("La cuenta origen no se encuentra activa u operativa");
+        super("la cuenta origen no esta operativa");
     }
+
     public AccountNotOperativeException(String message) {
         super(message);
     }
