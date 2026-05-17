@@ -1,8 +1,15 @@
 package com.carlos.account.service;
 
-import com.carlos.account.model.Account;
+import com.carlos.account.dto.AccountBalanceResponse;
+import com.carlos.account.dto.AccountResponse;
+import com.carlos.account.dto.CreateAccountRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface IAccountService {
-    Account create(Account account);
-    Account findByAccountNumber(String accountNumber);
+    AccountResponse create(CreateAccountRequest request);
+
+    AccountBalanceResponse getBalance(String accountNumber);
+
+    Page<AccountResponse> findByCustomer(Long customerId, Pageable pageable);
 }
