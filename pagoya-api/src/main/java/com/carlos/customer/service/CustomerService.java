@@ -1,14 +1,16 @@
 package com.carlos.customer.service;
 
+import com.carlos.auth.model.User;
+import com.carlos.auth.repository.UserRepository;
 import com.carlos.customer.dto.CreateCustomerRequest;
 import com.carlos.customer.dto.CustomerResponse;
+import com.carlos.customer.dto.UpdateCustomerRequest;
 import com.carlos.customer.exception.CustomerProfileAlreadyExistsException;
 import com.carlos.customer.exception.DniAlreadyExistsException;
 import com.carlos.customer.mapper.CustomerMapper;
 import com.carlos.customer.model.Customer;
 import com.carlos.customer.repository.CustomerRepository;
 import com.carlos.shared.exception.ResourceNotFoundException;
-import com.carlos.shared.pagination.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +23,7 @@ public class CustomerService implements ICustomerService {
 
     private final CustomerRepository customerRepository;
     private final CustomerMapper customerMapper;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
@@ -45,5 +48,35 @@ public class CustomerService implements ICustomerService {
     public Page<CustomerResponse> findAll(Pageable pageable) {
         return customerRepository.findAll(pageable)
                 .map(customerMapper::toResponse);
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public CustomerResponse findByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("usuario no encontrado"));
+        return customerRepository.findByUserId(user.getId())
+                .map(customerMapper::toResponse)
+                .orElseThrow(() -> new ResourceNotFoundException("perfil no encontrado"));
+    }
+
+    @Override
+    @Transactional
+    public CustomerResponse updateByEmail(String email, UpdateCustomerRequest request) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("usuario no encontrado"));
+        Customer customer = customerRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("perfil no encontrado"));
+
+        customer.setFullName(request.fullName());
+        customer.setPhone(request.phone());
+        return customerMapper.toResponse(customerRepository.save(customer));
+    }
+
+    @Override
+    public void delete(Long id) {
+        if (!customerRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Cliente no encontrado");
+        }
+        customerRepository.deleteById(id);
     }
 }
